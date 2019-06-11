@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">RestaurantMobile</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="no_evening">Serata non selezionata</string>
+    <string name="tables">Tavoli</string>
+    <string name="table_management">Gestione tavolo</string>
+    <string name="cover_charges">Coperti</string>
+    <string name="waiter">Cameriere</string>
+    <string name="table">Tavolo</string>
+    <string name="edit">Modifica</string>
+    <string name="delete">Elimina</string>
+</resources>

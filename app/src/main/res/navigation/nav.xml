@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.naigoapps.restaurantmobile.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/actionLoadTables"
+            app:destination="@id/tablesFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/tablesFragment"
+        android:name="com.naigoapps.restaurantmobile.tables.DiningTablesFragment"
+        android:label="Tavoli"
+        tools:layout="@layout/dining_tables_fragment" >
+        <action
+            android:id="@+id/selectTable"
+            app:destination="@id/diningTableFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/diningTableFragment"
+        android:name="com.naigoapps.restaurantmobile.tables.table.DiningTableFragment"
+        tools:layout="@layout/dining_table_view" >
+        <action
+            android:id="@+id/action_diningTableFragment_to_ordinationEditorFragment"
+            app:destination="@id/ordinationEditorFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/diningTableEditor"
+        android:name="com.naigoapps.restaurantmobile.tables.table.DiningTableEditorFragment"
+        tools:layout="@layout/dining_table_editor" />
+    <fragment
+        android:id="@+id/ordinationEditorFragment"
+        android:name="com.naigoapps.restaurantmobile.tables.table.ordinations.OrdinationEditorFragment"
+        android:label="ordination_editor"
+        tools:layout="@layout/ordination_editor" />
+
+</navigation>
