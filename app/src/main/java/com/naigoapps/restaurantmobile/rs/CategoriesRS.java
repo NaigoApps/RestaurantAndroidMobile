@@ -8,7 +8,7 @@ import retrofit2.http.GET;
 public interface CategoriesRS {
 
     @GET("categories")
-    public Call<CategoryDTO[]> list();
+    Call<CategoryDTO[]> list();
 
 }
 

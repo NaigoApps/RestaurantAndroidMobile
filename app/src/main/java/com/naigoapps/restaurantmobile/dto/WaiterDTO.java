@@ -67,6 +67,6 @@ public class WaiterDTO extends DTO{
     @NonNull
     @Override
     public String toString() {
-        return name + " " + surname;
+        return name;
     }
 }

@@ -13,15 +13,7 @@ import androidx.annotation.NonNull;
  */
 public class RestaurantTableDTO extends DTO{
     private String name;
-
-    public RestaurantTableDTO() {
-        super();
-    }
-
-    public RestaurantTableDTO(String uuid, String name) {
-        super(uuid);
-        this.name = name;
-    }
+    private boolean busy;
 
     public String getName() {
         return name;
@@ -30,6 +22,14 @@ public class RestaurantTableDTO extends DTO{
     public void setName(String name) {
         this.name = name;
     }
+    
+    public boolean isBusy() {
+		return busy;
+	}
+    
+    public void setBusy(boolean busy) {
+		this.busy = busy;
+	}
 
     @NonNull
     @Override

@@ -2,6 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@id/tablesFragment"
+        android:id="@id/diningTablesFragment"
         android:title="@string/tables" />
+
+    <item
+        android:id="@id/settingsFragment"
+        android:title="@string/preferences" />
 </menu>

@@ -14,8 +14,8 @@ import retrofit2.Response;
 
 public class WaitersLoadTask extends RemoteLoadTask<List<WaiterDTO>> {
 
-    public WaitersLoadTask(FragmentActivity activity, Consumer<List<WaiterDTO>> consumer) {
-        super(activity, consumer);
+    public WaitersLoadTask(Consumer<List<WaiterDTO>> consumer) {
+        super(consumer);
     }
 
     @Override

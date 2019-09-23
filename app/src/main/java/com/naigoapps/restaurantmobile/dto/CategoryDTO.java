@@ -13,8 +13,10 @@ import java.util.List;
  */
 public class CategoryDTO extends DTO{
     private String name;
+
+    private LocationDTO location;
     
-    private Integer color;
+    private String color;
     
     private List<DishDTO> dishes;
     
@@ -44,12 +46,20 @@ public class CategoryDTO extends DTO{
         return additions;
     }
 
-    public void setColor(Integer color) {
+    public void setColor(String color) {
         this.color = color;
     }
 
-    public Integer getColor() {
+    public String getColor() {
         return color;
     }
 
+	public LocationDTO getLocation() {
+		return location;
+	}
+
+	public void setLocation(LocationDTO location) {
+		this.location = location;
+	}
+    
 }

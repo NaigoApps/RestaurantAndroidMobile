@@ -1,8 +1,6 @@
 <resources>
     <string name="app_name">RestaurantMobile</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="no_evening">Serata non selezionata</string>
     <string name="tables">Tavoli</string>
     <string name="table_management">Gestione tavolo</string>
@@ -11,4 +9,20 @@
     <string name="table">Tavolo</string>
     <string name="edit">Modifica</string>
     <string name="delete">Elimina</string>
+    <string name="fold">fold</string>
+    <string name="confirm">Conferma</string>
+    <string name="select_one">Seleziona...</string>
+    <string name="back">Indietro</string>
+    <string name="quantity">Quantità</string>
+    <string name="notes">Note</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Annulla</string>
+    <string name="send_message">Invia messaggio</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="message">Messaggio</string>
+    <string name="location">Postazione</string>
+    <string name="send_message_for">Tavolo %1$s</string>
+    <string name="preferences">Preferenze</string>
+    <string name="ordinationConfirmError">Errore durante la conferma</string>
 </resources>

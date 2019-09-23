@@ -5,6 +5,8 @@
  */
 package com.naigoapps.restaurantmobile.dto;
 
+import com.naigoapps.restaurantmobile.common.Utils;
+
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 
@@ -12,26 +14,26 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- *
  * @author naigo
  */
-public class DiningTableDTO extends DTO{
+public class DiningTableDTO extends DTO {
 
     private String eveningId;
-    
+
     private int coverCharges;
-    
+
     private WaiterDTO waiter;
-    
+
     private List<OrdinationDTO> ordinations;
-    
+
     private LocalDateTime openingTime;
-    
+
     private RestaurantTableDTO table;
-    
+
     private DiningTableStatus status;
 
-    public DiningTableDTO() {}
+    public DiningTableDTO() {
+    }
 
     public String getEveningId() {
         return eveningId;
@@ -88,15 +90,15 @@ public class DiningTableDTO extends DTO{
     public void setStatus(DiningTableStatus status) {
         this.status = status;
     }
-    
-    public static Comparator<DiningTableDTO> comparator(){
-    	return (a, b) -> a.getOpeningTime().compareTo(b.getOpeningTime());
+
+    public static Comparator<DiningTableDTO> comparator() {
+        return (a, b) -> a.getOpeningTime().compareTo(b.getOpeningTime());
     }
 
-    public String format(){
+    public String format() {
         return new StringBuilder()
-                .append(table.getName()).append(' ')
-                .append(waiter.getName()).append(' ')
+                .append(Utils.string(table)).append(' ')
+                .append(Utils.string(waiter)).append(' ')
                 .append(DateTimeFormat.forPattern("'('HH:mm')'").print(openingTime))
                 .toString();
     }

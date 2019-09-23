@@ -1,6 +1,8 @@
 package com.naigoapps.restaurantmobile.rs;
 
 import com.naigoapps.restaurantmobile.dto.DiningTableDTO;
+import com.naigoapps.restaurantmobile.dto.DiningTableSkeletonDTO;
+import com.naigoapps.restaurantmobile.dto.WrapperDTO;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -12,19 +14,22 @@ import retrofit2.http.Path;
 
 public interface DiningTablesRS {
 
-    @GET("dining-tables")
-    public Call<DiningTableDTO[]> list();
+    @GET("dining-tables/open")
+    Call<DiningTableDTO[]> list();
 
     @GET("dining-tables/{uuid}")
-    public Call<DiningTableDTO> load(@Path("uuid") String uuid);
+    Call<DiningTableDTO> load(@Path("uuid") String uuid);
+
+    @GET("dining-tables/{uuid}/skeleton")
+    Call<DiningTableSkeletonDTO> loadSkeleton(@Path("uuid") String uuid);
 
     @POST("dining-tables")
-    public Call<DiningTableDTO> create(@Body DiningTableDTO dto);
+    Call<DiningTableSkeletonDTO> create(@Body DiningTableSkeletonDTO dto);
 
     @PUT("dining-tables/{uuid}")
-    public Call<DiningTableDTO> edit(@Path("uuid") String uuid, @Body DiningTableDTO dto);
+    Call<DiningTableSkeletonDTO> edit(@Body DiningTableSkeletonDTO dto);
 
     @DELETE("dining-tables/{uuid}")
-    public Call<Boolean> delete(@Path("uuid") String uuid);
+    Call<Boolean> delete(@Path("uuid") String uuid);
 }
 

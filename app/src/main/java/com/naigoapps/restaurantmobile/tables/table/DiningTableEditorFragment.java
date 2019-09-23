@@ -1,49 +1,72 @@
 package com.naigoapps.restaurantmobile.tables.table;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Spinner;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.util.Consumer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.naigoapps.restaurantmobile.R;
-import com.naigoapps.restaurantmobile.dto.DiningTableDTO;
+import com.naigoapps.restaurantmobile.common.RemoteDataFragment;
+import com.naigoapps.restaurantmobile.dto.DiningTableSkeletonDTO;
 import com.naigoapps.restaurantmobile.dto.RestaurantTableDTO;
 import com.naigoapps.restaurantmobile.dto.WaiterDTO;
-import com.naigoapps.restaurantmobile.tasks.DiningTableCreateTask;
-import com.naigoapps.restaurantmobile.tasks.DiningTableEditTask;
-import com.naigoapps.restaurantmobile.viewmodels.DiningTableViewModel;
+import com.naigoapps.restaurantmobile.tables.DiningTableEditTask;
+import com.naigoapps.restaurantmobile.tasks.diningTables.DiningTableCreateTask;
+import com.naigoapps.restaurantmobile.viewmodels.DiningTableSkeletonViewModel;
+import com.naigoapps.restaurantmobile.viewmodels.RemoteDataViewModel;
 import com.naigoapps.restaurantmobile.viewmodels.TablesViewModel;
 import com.naigoapps.restaurantmobile.viewmodels.WaitersViewModel;
-import com.naigoapps.restaurantmobile.widgets.RemoteSpinnerAdapter;
+import com.naigoapps.restaurantmobile.widgets.SpinnerAdapter;
 
+import java.util.List;
 import java.util.Locale;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.navigation.Navigation;
-
-public class DiningTableEditorFragment extends Fragment {
+public class DiningTableEditorFragment extends RemoteDataFragment<DiningTableSkeletonDTO> {
 
     private static final int SPINNER_ITEM = com.google.android.material.R.layout.support_simple_spinner_dropdown_item;
 
     private TextInputEditText coverChargesView;
     private Spinner tableSpinner;
+    private SpinnerAdapter<RestaurantTableDTO> tableSpinnerAdapter;
     private Spinner waiterSpinner;
+    private SpinnerAdapter<WaiterDTO> waiterSpinnerAdapter;
 
-    private OrdinationsAdapter listAdapter;
+    private FloatingActionButton abortBtn;
+    private FloatingActionButton confirmBtn;
+
+    private WaitersViewModel waitersViewModel;
+    private TablesViewModel tablesViewModel;
+
+    private String diningTableUuid;
 
     public DiningTableEditorFragment() {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (getArguments() != null) {
+            diningTableUuid = DiningTableEditorFragmentArgs.fromBundle(getArguments()).getTableUuid();
+        }
+        waitersViewModel = ViewModelProviders.of(this).get(WaitersViewModel.class);
+        tablesViewModel = ViewModelProviders.of(this).get(TablesViewModel.class);
+        waitersViewModel.refresh();
+        tablesViewModel.refresh();
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.dining_table_editor, container, false);
     }
@@ -55,81 +78,88 @@ public class DiningTableEditorFragment extends Fragment {
         tableSpinner = view.findViewById(R.id.tableField);
         waiterSpinner = view.findViewById(R.id.waiterField);
 
-        if (getActivity() != null) {
-            WaitersViewModel waitersViewModel = WaitersViewModel.get(getActivity());
-            waiterSpinner.setAdapter(new RemoteSpinnerAdapter<>(getActivity(), SPINNER_ITEM, waitersViewModel));
+        abortBtn = view.findViewById(R.id.abortDiningTable);
+        confirmBtn = view.findViewById(R.id.confirmDiningTable);
+    }
 
-            TablesViewModel tablesViewModel = ViewModelProviders.of(getActivity()).get(TablesViewModel.class);
-            tableSpinner.setAdapter(new RemoteSpinnerAdapter<>(getActivity(), SPINNER_ITEM, tablesViewModel));
-        }
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        waiterSpinnerAdapter = new SpinnerAdapter<>(getContext(), SPINNER_ITEM);
+        waiterSpinner.setAdapter(waiterSpinnerAdapter);
+        tableSpinnerAdapter = new SpinnerAdapter<>(getContext(), SPINNER_ITEM);
+        tableSpinner.setAdapter(tableSpinnerAdapter);
 
-        FloatingActionButton abortBtn = view.findViewById(R.id.abortDiningTable);
-        abortBtn.setOnClickListener(evt -> Navigation.findNavController(view).navigateUp());
-        FloatingActionButton confirmBtn = view.findViewById(R.id.confirmDiningTable);
+        abortBtn.setOnClickListener(evt -> NavHostFragment
+                .findNavController(DiningTableEditorFragment.this).navigateUp());
 
-        String tableUuid;
-        if (getArguments() != null && (tableUuid = getArguments().getString("table")) != null) {
-            DiningTableViewModel viewModel = ViewModelProviders.of(getActivity()).get(DiningTableViewModel.class);
-            viewModel.setTableUuid(tableUuid);
-            viewModel.load(getActivity(), this::loadDiningTable);
+        confirmBtn.setOnClickListener(evt -> {
+            DiningTableSkeletonDTO body = buildDiningTable();
+            if(body != null) {
+                Consumer<DiningTableSkeletonDTO> onOk = dto -> NavHostFragment
+                        .findNavController(DiningTableEditorFragment.this).navigateUp();
 
-            confirmBtn.setOnClickListener(evt -> {
-                DiningTableEditTask tableEditTask = new DiningTableEditTask(getActivity(), result -> {
-                    if (result != null) {
-                        Navigation.findNavController(view).navigateUp();
-                    }
-                });
-                DiningTableDTO dto = createDiningTable();
-                if (dto != null) {
-                    dto.setUuid(viewModel.getTableUuid());
-                    tableEditTask.setDiningTable(dto);
-                    tableEditTask.execute();
+                if (diningTableUuid != null) {
+                    DiningTableEditTask task = new DiningTableEditTask(onOk);
+                    task.setDiningTable(body);
+                    task.execute();
+                } else {
+                    DiningTableCreateTask task = new DiningTableCreateTask(onOk);
+                    task.setDiningTable(body);
+                    task.execute();
                 }
-            });
+            }
+        });
 
-        } else {
-            confirmBtn.setOnClickListener(evt -> {
-                DiningTableCreateTask tableCreateTask = new DiningTableCreateTask(getActivity(), result -> {
-                    if (result != null) {
-                        Navigation.findNavController(view).navigateUp();
-                    }
-                });
-                DiningTableDTO dto = createDiningTable();
-                if (dto != null) {
-                    tableCreateTask.setDiningTable(dto);
-                    tableCreateTask.execute();
-                }
-            });
+        waitersViewModel.register(this, this::onLoadWaiters);
+        tablesViewModel.register(this, this::onLoadTables);
+    }
+
+    @Override
+    protected void onLoad(DiningTableSkeletonDTO data) {
+        if (data != null) {
+            coverChargesView.setText(String.format(Locale.getDefault(), "%d", data.getCoverCharges()));
+            waiterSpinner.setSelection(waiterSpinnerAdapter.getPosition(data.getWaiter()));
+            tableSpinner.setSelection(tableSpinnerAdapter.getPosition(data.getTable()));
         }
     }
 
-    private DiningTableDTO createDiningTable() {
+    private void onLoadWaiters(List<WaiterDTO> waiters) {
+        waiterSpinnerAdapter.update(waiters);
+        if (getData() != null) {
+            waiterSpinner.setSelection(waiterSpinnerAdapter.getPosition(getData().getWaiter()));
+        }
+    }
+
+    private void onLoadTables(List<RestaurantTableDTO> tables) {
+        tableSpinnerAdapter.update(tables);
+        if (getData() != null) {
+            tableSpinner.setSelection(tableSpinnerAdapter.getPosition(getData().getTable()));
+        }
+    }
+
+    @Override
+    protected RemoteDataViewModel<DiningTableSkeletonDTO> createViewModel() {
+        DiningTableSkeletonViewModel viewModel = ViewModelProviders.of(this).get(DiningTableSkeletonViewModel.class);
+        viewModel.setTableUuid(diningTableUuid);
+        return viewModel;
+    }
+
+    private DiningTableSkeletonDTO buildDiningTable() {
         try {
-            DiningTableDTO dto = new DiningTableDTO();
-            dto.setCoverCharges(Integer.parseInt(coverChargesView.getText().toString()));
-            WaiterDTO w = (WaiterDTO) waiterSpinner.getSelectedItem();
-            dto.setWaiter(w);
-            RestaurantTableDTO rt = (RestaurantTableDTO) tableSpinner.getSelectedItem();
-            dto.setTable(rt);
-            return dto;
+            int ccs = Integer.parseInt(coverChargesView.getText().toString());
+            WaiterDTO waiterDTO = waiterSpinnerAdapter.getItem(waiterSpinner.getSelectedItemPosition());
+            RestaurantTableDTO tableDTO = tableSpinnerAdapter.getItem(tableSpinner.getSelectedItemPosition());
+
+            DiningTableSkeletonDTO body = new DiningTableSkeletonDTO();
+            body.setUuid(diningTableUuid);
+            body.setCoverCharges(ccs);
+            body.setWaiter(waiterDTO);
+            body.setTable(tableDTO);
+            return body;
         } catch (Exception ex) {
-            Log.e("Error", "Error", ex);
-            Toast.makeText(getContext(), "Dati non validi", Toast.LENGTH_SHORT).show();
+            Log.w("Error", ex.getMessage());
         }
         return null;
-    }
-
-    private void loadDiningTable(DiningTableDTO dto) {
-        waiterSpinner.setVisibility(View.GONE);
-        tableSpinner.setVisibility(View.GONE);
-        coverChargesView.setText(String.format(Locale.getDefault(), "%d", dto.getCoverCharges()));
-        WaitersViewModel.get(getActivity()).get(getActivity(), dtos -> {
-            waiterSpinner.setSelection(dtos.indexOf(dto.getWaiter()));
-            waiterSpinner.setVisibility(View.VISIBLE);
-        });
-        TablesViewModel.get(getActivity()).get(getActivity(), dtos -> {
-            tableSpinner.setSelection(dtos.indexOf(dto.getTable()));
-            tableSpinner.setVisibility(View.VISIBLE);
-        });
     }
 }

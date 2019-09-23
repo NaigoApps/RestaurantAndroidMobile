@@ -1,25 +1,21 @@
 package com.naigoapps.restaurantmobile.viewmodels;
 
-import com.naigoapps.restaurantmobile.RemoteLoadTask;
-import com.naigoapps.restaurantmobile.dto.CategoryDTO;
-import com.naigoapps.restaurantmobile.dto.RestaurantTableDTO;
-import com.naigoapps.restaurantmobile.tasks.CategoriesLoadTask;
-import com.naigoapps.restaurantmobile.tasks.RestaurantTablesLoadTask;
-
-import java.util.List;
-
 import androidx.core.util.Consumer;
-import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
 
-public class CategoriesViewModel extends RemoteViewModel<CategoryDTO[]> {
+import com.naigoapps.restaurantmobile.Application;
+import com.naigoapps.restaurantmobile.RemoteLoadTask;
+import com.naigoapps.restaurantmobile.dto.CategoryDTO;
+import com.naigoapps.restaurantmobile.tables.table.ordinations.editing.categories.CategoriesLoadTask;
+
+public class CategoriesViewModel extends RemoteDataViewModel<CategoryDTO[]> {
 
     @Override
-    protected RemoteLoadTask<CategoryDTO[]> createTask(FragmentActivity owner, Consumer<CategoryDTO[]> consumer) {
-        return new CategoriesLoadTask(owner, consumer);
+    protected RemoteLoadTask<CategoryDTO[]> createTask(Consumer<CategoryDTO[]> consumer) {
+        return new CategoriesLoadTask(consumer);
     }
 
-    public static CategoriesViewModel get(FragmentActivity f){
-        return ViewModelProviders.of(f).get(CategoriesViewModel.class);
+    public static CategoriesViewModel get(){
+        return ViewModelProviders.of(Application.getActivity()).get(CategoriesViewModel.class);
     }
 }

@@ -1,86 +1,119 @@
 package com.naigoapps.restaurantmobile.tables.table;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.naigoapps.restaurantmobile.R;
-import com.naigoapps.restaurantmobile.dto.DiningTableDTO;
-import com.naigoapps.restaurantmobile.dto.OrdinationDTO;
-import com.naigoapps.restaurantmobile.tables.IdentifiableCallback;
-import com.naigoapps.restaurantmobile.tables.RemoteDataFragment;
-import com.naigoapps.restaurantmobile.viewmodels.DiningTableViewModel;
-import com.naigoapps.restaurantmobile.viewmodels.RemoteViewModel;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-public class DiningTableFragment extends RemoteDataFragment<DiningTableDTO> {
+import com.naigoapps.restaurantmobile.R;
+import com.naigoapps.restaurantmobile.common.RecyclerViewAdapter;
+import com.naigoapps.restaurantmobile.common.RemoteCrudListFragment;
+import com.naigoapps.restaurantmobile.dto.OrdinationDTO;
+import com.naigoapps.restaurantmobile.tables.table.ordinations.OrdinationsAdapter;
+import com.naigoapps.restaurantmobile.tasks.OrdinationCreateTask;
+import com.naigoapps.restaurantmobile.viewmodels.OrdinationsViewModel;
+import com.naigoapps.restaurantmobile.viewmodels.RemoteDataViewModel;
 
-    private TextView titleView;
-    private SwipeRefreshLayout listContainer;
-    private FloatingActionButton createOrdinationButton;
+public class DiningTableFragment extends RemoteCrudListFragment<OrdinationDTO> {
 
-    private OrdinationsAdapter listAdapter;
+    private String diningTableUuid;
 
     public DiningTableFragment() {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.dining_table_view, container, false);
-    }
-
-    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        titleView = view.findViewById(R.id.title);
-
-        listContainer = view.findViewById(R.id.ordinationsListContainer);
-        listContainer.setOnRefreshListener(this::refresh);
-
-        RecyclerView list = view.findViewById(R.id.ordinationsList);
-        list.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        listAdapter = new OrdinationsAdapter(list);
-        list.setAdapter(listAdapter);
-
-        createOrdinationButton = view.findViewById(R.id.btnAddOrdination);
-        createOrdinationButton.setOnClickListener(evt -> Navigation.findNavController(createOrdinationButton).navigate(R.id.ordinationEditorFragment));
-
+        diningTableUuid = getTableUuid(getArguments());
     }
 
     @Override
-    protected void onLoad(DiningTableDTO data) {
-        titleView.setText(data.format());
-
-        OrdinationDTO[] newData = data.getOrdinations().stream().toArray(OrdinationDTO[]::new);
-
-        DiffUtil.DiffResult result = DiffUtil.calculateDiff(
-                new IdentifiableCallback(
-                        listAdapter.getData(),
-                        newData));
-        result.dispatchUpdatesTo(listAdapter);
-        listAdapter.updateData(newData);
-        listContainer.setRefreshing(false);
+    protected RecyclerViewAdapter<?, OrdinationDTO> createAdapter(RecyclerView view) {
+        return new OrdinationsAdapter(this, view);
     }
 
     @Override
-    protected RemoteViewModel<DiningTableDTO> getViewModel() {
-        String tableUuid = getArguments().getString("uuid");
-        DiningTableViewModel model = ViewModelProviders.of(getActivity()).get(DiningTableViewModel.class);
-        model.setTableUuid(tableUuid);
-        return model;
+    public void onAdd() {
+        OrdinationCreateTask task = new OrdinationCreateTask(ordination -> NavHostFragment
+                .findNavController(this)
+                .navigate(DiningTableFragmentDirections
+                        .editOrdination(diningTableUuid, ordination.getUuid())));
+        task.setDiningTableUuid(diningTableUuid);
+        task.execute();
+    }
+
+    @Override
+    public Integer getContextualMenuId() {
+        return R.menu.crud_menu;
+    }
+
+    @Override
+    public boolean onContextualMenuClick(int menuItemId) {
+        boolean ok = false;
+        switch (menuItemId) {
+            case R.id.editItem:
+
+                NavHostFragment.findNavController(DiningTableFragment.this)
+                        .navigate(DiningTableFragmentDirections.editOrdination(diningTableUuid, getSelection()));
+                ok = true;
+                break;
+            case R.id.deleteItem:
+                OrdinationDeleteTask deleteTask = new OrdinationDeleteTask(result -> {
+                    refresh();
+                    clearSelection();
+                });
+                deleteTask.setDiningTable(diningTableUuid);
+                deleteTask.setOrdination(getSelection());
+                showConfirmDialog("Eliminare la comanda?", (d, w) -> {
+                    deleteTask.execute();
+                });
+                ok = true;
+                break;
+        }
+        return ok;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    protected RemoteDataViewModel<OrdinationDTO[]> createViewModel() {
+        OrdinationsViewModel viewModel = ViewModelProviders.of(this).get(OrdinationsViewModel.class);
+        viewModel.setDiningTableUuid(diningTableUuid);
+        return viewModel;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_dining_tables, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.sendMessageItem) {
+            NavHostFragment.findNavController(this)
+                    .navigate(DiningTableFragmentDirections.sendTableMessage()
+                            .setTableUuid(diningTableUuid));
+            return true;
+        }
+        return false;
+    }
+
+    private static String getTableUuid(Bundle arguments) {
+        if (arguments != null) {
+            return DiningTableFragmentArgs.fromBundle(arguments).getTableUuid();
+        }
+        return null;
     }
 
 }

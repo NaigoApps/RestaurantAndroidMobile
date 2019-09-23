@@ -1,15 +1,9 @@
 package com.naigoapps.restaurantmobile.rs.cache;
 
 import android.content.Context;
-import android.util.Log;
 
-import com.naigoapps.restaurantmobile.SimpleTask;
 import com.naigoapps.restaurantmobile.dto.DTO;
-import com.naigoapps.restaurantmobile.dto.RestaurantTableDTO;
-import com.naigoapps.restaurantmobile.rs.RSFactory;
-import com.naigoapps.restaurantmobile.rs.TablesRS;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -17,7 +11,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import retrofit2.Response;
 
 public abstract class DTOCache<D extends DTO> extends ViewModel {
 

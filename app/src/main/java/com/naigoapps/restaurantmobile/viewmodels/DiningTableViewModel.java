@@ -1,17 +1,12 @@
 package com.naigoapps.restaurantmobile.viewmodels;
 
+import androidx.core.util.Consumer;
+
 import com.naigoapps.restaurantmobile.RemoteLoadTask;
 import com.naigoapps.restaurantmobile.dto.DiningTableDTO;
-import com.naigoapps.restaurantmobile.dto.WaiterDTO;
-import com.naigoapps.restaurantmobile.tasks.DiningTableLoadTask;
-import com.naigoapps.restaurantmobile.tasks.WaitersLoadTask;
+import com.naigoapps.restaurantmobile.tasks.diningTables.DiningTableLoadTask;
 
-import java.util.List;
-
-import androidx.core.util.Consumer;
-import androidx.fragment.app.FragmentActivity;
-
-public class DiningTableViewModel extends RemoteViewModel<DiningTableDTO> {
+public class DiningTableViewModel extends RemoteDataViewModel<DiningTableDTO> {
 
     private String tableUuid;
 
@@ -24,7 +19,7 @@ public class DiningTableViewModel extends RemoteViewModel<DiningTableDTO> {
     }
 
     @Override
-    protected RemoteLoadTask<DiningTableDTO> createTask(FragmentActivity owner, Consumer<DiningTableDTO> consumer) {
-        return new DiningTableLoadTask(owner, consumer, tableUuid);
+    protected RemoteLoadTask<DiningTableDTO> createTask(Consumer<DiningTableDTO> consumer) {
+        return new DiningTableLoadTask(consumer, tableUuid);
     }
 }

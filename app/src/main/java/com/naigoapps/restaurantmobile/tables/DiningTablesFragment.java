@@ -1,105 +1,94 @@
 package com.naigoapps.restaurantmobile.tables;
 
 import android.os.Bundle;
-import android.view.ActionMode;
-import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.naigoapps.restaurantmobile.R;
-import com.naigoapps.restaurantmobile.dto.DiningTableDTO;
-import com.naigoapps.restaurantmobile.tasks.DiningTableDeleteTask;
-import com.naigoapps.restaurantmobile.viewmodels.DiningTablesViewModel;
-import com.naigoapps.restaurantmobile.viewmodels.RemoteViewModel;
-
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class DiningTablesFragment extends RemoteRecyclerViewFragment<DiningTableDTO> {
+import com.naigoapps.restaurantmobile.R;
+import com.naigoapps.restaurantmobile.common.RecyclerViewAdapter;
+import com.naigoapps.restaurantmobile.common.RemoteCrudListFragment;
+import com.naigoapps.restaurantmobile.dto.DiningTableDTO;
+import com.naigoapps.restaurantmobile.tasks.diningTables.DiningTableCreateTask;
+import com.naigoapps.restaurantmobile.tasks.diningTables.DiningTableDeleteTask;
+import com.naigoapps.restaurantmobile.viewmodels.DiningTablesViewModel;
+import com.naigoapps.restaurantmobile.viewmodels.RemoteDataViewModel;
 
-    public DiningTablesFragment() {
-    }
+public class DiningTablesFragment extends RemoteCrudListFragment<DiningTableDTO> {
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.dining_tables_fragment, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        FloatingActionButton newDiningTableButton = view.findViewById(R.id.btnAddTable);
-
-        newDiningTableButton.setOnClickListener(evt ->
-                Navigation.findNavController(view).navigate(R.id.diningTableEditor));
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
     protected RecyclerViewAdapter<?, DiningTableDTO> createAdapter(RecyclerView view) {
-        return new DiningTablesAdapter(view);
+        return new DiningTablesAdapter(this, view);
     }
 
     @Override
-    protected RemoteViewModel<DiningTableDTO[]> getViewModel() {
-        return ViewModelProviders.of(getActivity()).get(DiningTablesViewModel.class);
+    protected RemoteDataViewModel<DiningTableDTO[]> createViewModel() {
+        return ViewModelProviders.of(this).get(DiningTablesViewModel.class);
     }
 
     @Override
-    protected ActionMode.Callback createActionMode() {
-        return new ActionMode.Callback() {
-            @Override
-            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                mode.getMenuInflater().inflate(R.menu.dining_table_menu, menu);
-                return true;
-            }
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_dining_tables, menu);
+    }
 
-            @Override
-            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                return false;
-            }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.sendMessageItem) {
+            NavHostFragment.findNavController(this)
+                    .navigate(DiningTablesFragmentDirections.sendGenericMessage());
+            return true;
+        }
+        return false;
+    }
 
-            @Override
-            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                boolean ok = false;
-                if (DiningTablesFragment.this.getView() != null) {
-                    View v = DiningTablesFragment.this.getView();
-                    switch (item.getItemId()) {
-                        case R.id.editDiningTableItem:
-                            Bundle bundle = new Bundle();
-                            bundle.putString("table", getSelection());
-                            Navigation.findNavController(v).navigate(R.id.diningTableEditor, bundle);
-                            ok = true;
-                            break;
-                        case R.id.deleteDiningTableItem:
-                            showConfirmDialog("Eliminare il tavolo?", (d, w) -> {
-                                DiningTableDeleteTask deleteTask = new DiningTableDeleteTask(getActivity(), result -> {
-                                    refresh();
-                                    clearSelection();
-                                });
-                                deleteTask.setDiningTable(getSelection());
-                                deleteTask.execute();
-                            });
-                            ok = false;
-                            break;
-                    }
-                }
-                if(ok){
+    @Override
+    public Integer getContextualMenuId() {
+        return R.menu.crud_menu;
+    }
+
+    @Override
+    public boolean onContextualMenuClick(int menuItemId) {
+        boolean ok = false;
+        switch (menuItemId) {
+            case R.id.editItem:
+                NavHostFragment.findNavController(DiningTablesFragment.this)
+                        .navigate(DiningTablesFragmentDirections
+                                .editDiningTable()
+                                .setTableUuid(getSelection()));
+                ok = true;
+                break;
+            case R.id.deleteItem:
+                DiningTableDeleteTask deleteTask = new DiningTableDeleteTask(result -> {
+                    refresh();
                     clearSelection();
-                }
-                return false;
-            }
-
-            @Override
-            public void onDestroyActionMode(ActionMode mode) {
-                DiningTablesFragment.this.onDestroyActionMode();
-            }
-        };
+                });
+                deleteTask.setDiningTable(getSelection());
+                showConfirmDialog("Eliminare il tavolo?", (d, w) -> {
+                    deleteTask.execute();
+                });
+                ok = true;
+                break;
+        }
+        return ok;
     }
+
+    @Override
+    public void onAdd() {
+        NavHostFragment.findNavController(this)
+                .navigate(DiningTablesFragmentDirections
+                        .editDiningTable()
+                        .setTableUuid(null));
+    }
+
 }

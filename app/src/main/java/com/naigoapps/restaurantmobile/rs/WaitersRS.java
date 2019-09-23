@@ -9,8 +9,8 @@ import retrofit2.http.GET;
 
 public interface WaitersRS {
 
-    @GET("waiters")
-    public Call<List<WaiterDTO>> list();
+    @GET("waiters/active")
+    Call<List<WaiterDTO>> list();
 
 }
 

@@ -1,23 +1,20 @@
 package com.naigoapps.restaurantmobile.viewmodels;
 
+import androidx.core.util.Consumer;
+import androidx.lifecycle.ViewModelProviders;
+
+import com.naigoapps.restaurantmobile.Application;
 import com.naigoapps.restaurantmobile.RemoteLoadTask;
 import com.naigoapps.restaurantmobile.dto.WaiterDTO;
 import com.naigoapps.restaurantmobile.tasks.WaitersLoadTask;
 
 import java.util.List;
 
-import androidx.core.util.Consumer;
-import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.ViewModelProviders;
-
-public class WaitersViewModel extends RemoteViewModel<List<WaiterDTO>> {
+public class WaitersViewModel extends RemoteDataViewModel<List<WaiterDTO>> {
 
     @Override
-    protected RemoteLoadTask<List<WaiterDTO>> createTask(FragmentActivity owner, Consumer<List<WaiterDTO>> consumer) {
-        return new WaitersLoadTask(owner, consumer);
+    protected RemoteLoadTask<List<WaiterDTO>> createTask(Consumer<List<WaiterDTO>> consumer) {
+        return new WaitersLoadTask(consumer);
     }
 
-    public static WaitersViewModel get(FragmentActivity f){
-        return ViewModelProviders.of(f).get(WaitersViewModel.class);
-    }
 }
