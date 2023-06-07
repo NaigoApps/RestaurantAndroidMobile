@@ -33,7 +33,7 @@ public class RSFactory {
     }
 
     public static <T> T createService(Context context, String resource, Class<T> serviceClass) {
-        String host = "192.168.43.40:8080";//TODO Get from properties
+        String host = "192.168.1.184:8080";//TODO Get from properties
 
         JodaTimeAndroid.init(context);
 

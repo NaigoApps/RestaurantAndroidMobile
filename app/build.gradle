@@ -5,11 +5,11 @@ plugins{
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 33
     defaultConfig {
         applicationId "com.naigoapps.restaurantmobile"
         minSdkVersion 24
-        targetSdkVersion 28
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -27,6 +27,7 @@ android {
     dataBinding {
         enabled = true
     }
+    namespace 'com.naigoapps.restaurantmobile'
 }
 
 dependencies {
