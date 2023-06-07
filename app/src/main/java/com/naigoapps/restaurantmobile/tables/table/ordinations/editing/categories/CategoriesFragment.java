@@ -84,7 +84,11 @@ public class CategoriesFragment extends RemoteCrudListFragment<CategoryDTO> {
             task.setContent(data);
             task.execute();
             return true;
+        }else if(item.getItemId() == android.R.id.home){
+            requireActivity().getOnBackPressedDispatcher().onBackPressed();
+            return true;
         }
+
         return false;
     }
 

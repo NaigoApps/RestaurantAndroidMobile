@@ -8,7 +8,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.selection.ItemDetailsLookup;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
@@ -22,22 +21,11 @@ import com.naigoapps.restaurantmobile.viewmodels.AdditionsViewModel;
 
 public class AdditionsListAdapter extends RemoteRecyclerViewAdapter<AdditionsListAdapter.AdditionViewHolder, AdditionsViewModel, AdditionDTO> {
 
-    public AdditionsListAdapter(Fragment fragment, RecyclerView view) {
-        super(fragment, view, SelectionType.NONE, additionsViewModel -> {
-            //TODO
+    public AdditionsListAdapter(Fragment fragment, RecyclerView view, String dishUuid) {
+        super(fragment, view, SelectionType.MULTIPLE, additionsViewModel -> {
+            additionsViewModel.setDish(dishUuid);
         });
     }
-
-//    @Override
-//    protected boolean onItemActivated(ItemDetailsLookup.ItemDetails key) {
-//        String k = getKey(key.getPosition());
-//        if (tracker.isSelected(k)) {
-//            tracker.deselect(k);
-//        } else {
-//            tracker.select(k);
-//        }
-//        return true;
-//    }
 
     @NonNull
     @Override
@@ -61,10 +49,6 @@ public class AdditionsListAdapter extends RemoteRecyclerViewAdapter<AdditionsLis
             textView = v.findViewById(R.id.itemText);
         }
 
-        public void bind(AdditionDTO addition) {
-            textView.setText(addition.getName());
-        }
-
         @Override
         public View getMainView() {
             return cardView;
@@ -72,11 +56,12 @@ public class AdditionsListAdapter extends RemoteRecyclerViewAdapter<AdditionsLis
 
         @Override
         public View.OnClickListener getClickListener(AdditionDTO dto) {
-            return null;
+            return evt -> select(dto.getUuid());
         }
 
         @Override
         public void updateView(AdditionDTO dto, boolean selected) {
+            textView.setText(dto.getName());
             cardView.setActivated(selected);
             if (cardView.isActivated()) {
                 cardView.setCardElevation(4);

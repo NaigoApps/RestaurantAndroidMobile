@@ -27,7 +27,7 @@ public class OrdinationGroupOrdersAdapter extends RecyclerViewAdapter<Ordination
     }
 
     public OrdinationGroupOrdersAdapter(Fragment fragment, RecyclerView view) {
-        super(fragment, view, SelectionType.NONE);
+        super(fragment, view, SelectionType.NONE, false);
     }
 
     @NonNull

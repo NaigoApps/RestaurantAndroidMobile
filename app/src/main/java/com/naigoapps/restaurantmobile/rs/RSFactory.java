@@ -56,7 +56,7 @@ public class RSFactory {
                 .create();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://" + host + "/restaurant/rest/" + resource)
+                .baseUrl("http://" + host + "/rest/" + resource)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(httpClient.build())
                 .build();

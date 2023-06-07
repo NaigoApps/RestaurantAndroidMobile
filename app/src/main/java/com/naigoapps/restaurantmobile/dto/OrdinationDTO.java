@@ -80,10 +80,10 @@ public class OrdinationDTO extends DTO {
     }
 
     public void addDish(PhaseDTO phase, DishDTO dish) {
-        addDish(phase, dish, 1, new HashSet<>(), null);
+        addDish(phase, dish, 1, Collections.emptyList(), null);
     }
 
-    public void addDish(PhaseDTO phase, DishDTO dish, int quantity, Set<AdditionDTO> additions, String notes) {
+    public void addDish(PhaseDTO phase, DishDTO dish, int quantity, List<AdditionDTO> additions, String notes) {
         PhaseOrdersDTO target = null;
         for (PhaseOrdersDTO po : orders) {
             if (po.getPhase().equals(phase)) {
@@ -115,7 +115,7 @@ public class OrdinationDTO extends DTO {
         if (target == null) {
             return;
         }
-        target.removeDish(dish, new HashSet<>(), null, dish.getPrice());
+        target.removeDish(dish, Collections.emptyList(), null, dish.getPrice());
         if (target.getOrders().isEmpty()) {
             orders.remove(target);
         }

@@ -78,11 +78,11 @@ public class OrdersGroupDTO extends DTO {
         this.phaseName = phaseName;
     }
 
-    public boolean match(DishDTO dto, Set<AdditionDTO> additions, String notes, float price){
+    public boolean match(DishDTO dto, List<AdditionDTO> additions, String notes, float price){
         if(!this.dish.equals(dto)){
             return false;
         }
-        if(!new HashSet<>(this.additions).equals(additions)){
+        if(!new HashSet<>(this.additions).equals(new HashSet<>(additions))){
             return false;
         }
         if(this.price != price){

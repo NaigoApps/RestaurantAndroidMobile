@@ -59,7 +59,7 @@ public class PhaseOrdersDTO extends DTO {
         return quantity;
     }
 
-    public void addDish(DishDTO dish, Set<AdditionDTO> additions, String notes, float price){
+    public void addDish(DishDTO dish, List<AdditionDTO> additions, String notes, float price){
         OrdersGroupDTO target = null;
         for (OrdersGroupDTO og : orders){
             if(og.match(dish, additions, notes, price)){
@@ -78,7 +78,7 @@ public class PhaseOrdersDTO extends DTO {
         target.setQuantity(target.getQuantity() + 1);
     }
 
-    public void removeDish(DishDTO dish, Set<AdditionDTO> additions, String notes, float price){
+    public void removeDish(DishDTO dish, List<AdditionDTO> additions, String notes, float price){
         OrdersGroupDTO target = null;
         for (OrdersGroupDTO og : orders){
             if(og.match(dish, additions, notes, price)){

@@ -33,7 +33,17 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerViewAdapter.Identif
 
     private Map<String, VH> holdersMap;
 
+    private boolean canScroll;
+
+    public RecyclerViewAdapter(Fragment owner, RecyclerView view) {
+        this(owner, view, SelectionType.NONE, true);
+    }
+
     public RecyclerViewAdapter(Fragment owner, RecyclerView view, SelectionType selectionType) {
+        this(owner, view, selectionType, true);
+    }
+
+    public RecyclerViewAdapter(Fragment owner, RecyclerView view, SelectionType selectionType, boolean canScroll) {
         this.owner = new WeakReference<>(owner);
         holdersMap = new HashMap<>();
         this.view = view;
@@ -41,6 +51,12 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerViewAdapter.Identif
             selectionViewModel = ViewModelProviders.of(owner).get(SelectionViewModel.class);
         }
         this.selectionType = selectionType;
+        this.canScroll = canScroll;
+
+        if (!canScroll) {
+            view.setLayoutFrozen(true);
+            view.setNestedScrollingEnabled(false);
+        }
     }
 
     @Override
@@ -67,12 +83,22 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerViewAdapter.Identif
     }
 
     public void updateData(D[] ds) {
+        if (!canScroll) {
+            view.setNestedScrollingEnabled(true);
+            view.setLayoutFrozen(false);
+        }
+
         DiffUtil.DiffResult result = DiffUtil.calculateDiff(
                 new IdentifiableCallback(dtos, ds));
         dtos = ds;
         result.dispatchUpdatesTo(this);
 
         notifyDataSetChanged();
+
+        if (!canScroll) {
+            view.setNestedScrollingEnabled(false);
+            view.setLayoutFrozen(true);
+        }
     }
 
     public D[] getData() {
@@ -173,7 +199,7 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerViewAdapter.Identif
     }
 
     public void refreshViewHolders() {
-        for(Map.Entry<String, VH> holder : holdersMap.entrySet()){
+        for (Map.Entry<String, VH> holder : holdersMap.entrySet()) {
             holder.getValue().refreshView(selectionViewModel.isSelected(holder.getKey()));
         }
     }
@@ -204,11 +230,18 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerViewAdapter.Identif
                     }
                 });
                 getMainView().setOnLongClickListener(v -> {
-                    toggleSelection(key);
-                    for (Map.Entry<String, VH> entry : holdersMap.entrySet()) {
-                        entry.getValue().refreshView(isSelected(entry.getKey()));
+                    View.OnClickListener customListener = getLongClickListener(find(key));
+                    if (!hasSelection() && customListener != null) {
+                        customListener.onClick(v);
+                        return true;
+                    } else if (selectionType != SelectionType.NONE) {
+                        toggleSelection(key);
+                        for (Map.Entry<String, VH> entry : holdersMap.entrySet()) {
+                            entry.getValue().refreshView(isSelected(entry.getKey()));
+                        }
+                        return true;
                     }
-                    return true;
+                    return false;
                 });
             }
         }
@@ -227,7 +260,11 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerViewAdapter.Identif
 
         public abstract View.OnClickListener getClickListener(D dto);
 
-        public Fragment getOwner(){
+        public View.OnClickListener getLongClickListener(D dto) {
+            return null;
+        }
+
+        public Fragment getOwner() {
             return owner.get();
         }
     }

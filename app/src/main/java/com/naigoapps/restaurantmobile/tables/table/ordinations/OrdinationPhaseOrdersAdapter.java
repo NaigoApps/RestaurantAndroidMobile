@@ -23,7 +23,7 @@ public class OrdinationPhaseOrdersAdapter extends RecyclerViewAdapter<Ordination
     }
 
     public OrdinationPhaseOrdersAdapter(Fragment fragment, RecyclerView view) {
-        super(fragment, view, SelectionType.NONE);
+        super(fragment, view, SelectionType.NONE, false);
     }
 
     @NonNull
@@ -48,8 +48,8 @@ public class OrdinationPhaseOrdersAdapter extends RecyclerViewAdapter<Ordination
         public void updateView(PhaseOrdersDTO dto, boolean selected) {
             phaseTitleView.setText(dto.getPhase().getName());
             OrdinationGroupOrdersAdapter adapter = new OrdinationGroupOrdersAdapter(ordersListView);
-            adapter.updateData(dto.getOrders().toArray(new OrdersGroupDTO[0]));
             ordersListView.setAdapter(adapter);
+            adapter.updateData(dto.getOrders().toArray(new OrdersGroupDTO[0]));
         }
 
         @Override

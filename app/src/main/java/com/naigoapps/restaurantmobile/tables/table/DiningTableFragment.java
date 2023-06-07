@@ -51,13 +51,23 @@ public class DiningTableFragment extends RemoteCrudListFragment<OrdinationDTO> {
 
     @Override
     public Integer getContextualMenuId() {
-        return R.menu.crud_menu;
+        return R.menu.menu_dining_table;
     }
 
     @Override
     public boolean onContextualMenuClick(int menuItemId) {
         boolean ok = false;
         switch (menuItemId) {
+            case R.id.printItem:
+                OrdinationPrintTask printTask = new OrdinationPrintTask(result -> {
+                    refresh();
+                    clearSelection();
+                });
+                printTask.setDiningTable(diningTableUuid);
+                printTask.setOrdination(getSelection());
+                printTask.execute();
+                ok = true;
+                break;
             case R.id.editItem:
 
                 NavHostFragment.findNavController(DiningTableFragment.this)

@@ -27,7 +27,7 @@ public interface DiningTablesRS {
     Call<DiningTableSkeletonDTO> create(@Body DiningTableSkeletonDTO dto);
 
     @PUT("dining-tables/{uuid}")
-    Call<DiningTableSkeletonDTO> edit(@Body DiningTableSkeletonDTO dto);
+    Call<DiningTableSkeletonDTO> edit(@Path("uuid") String uuid, @Body DiningTableSkeletonDTO dto);
 
     @DELETE("dining-tables/{uuid}")
     Call<Boolean> delete(@Path("uuid") String uuid);

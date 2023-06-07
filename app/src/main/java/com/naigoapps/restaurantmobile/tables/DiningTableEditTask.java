@@ -26,7 +26,7 @@ public class DiningTableEditTask extends RemoteLoadTask<DiningTableSkeletonDTO> 
 
     @Override
     protected Response<DiningTableSkeletonDTO> makeRequest(FragmentActivity activity) throws IOException {
-        return RSFactory.createService(activity, DiningTablesRS.class).edit(skeletonDTO).execute();
+        return RSFactory.createService(activity, DiningTablesRS.class).edit(skeletonDTO.getUuid(), skeletonDTO).execute();
     }
 
 }

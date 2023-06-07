@@ -19,7 +19,6 @@
     <string name="cancel">Annulla</string>
     <string name="send_message">Invia messaggio</string>
 
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="message">Messaggio</string>
     <string name="location">Postazione</string>
     <string name="send_message_for">Tavolo %1$s</string>

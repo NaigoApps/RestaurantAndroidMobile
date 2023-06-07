@@ -65,7 +65,7 @@
             app:nullable="false" />
         <action
             android:id="@+id/selectCategory"
-            app:destination="@id/dishesFragment"/>
+            app:destination="@id/dishesFragment" />
         <action
             android:id="@+id/confirmOrdinationFromCategories"
             app:destination="@id/diningTableFragment" />
@@ -104,6 +104,22 @@
         <action
             android:id="@+id/confirmOrdinationFromDishes"
             app:destination="@id/diningTableFragment" />
+        <action
+            android:id="@+id/customizeDish"
+            app:destination="@id/customDishFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/customDishFragment"
+        android:name="com.naigoapps.restaurantmobile.tables.table.ordinations.editing.dishes.CustomDishFragment"
+        android:label="{dishName}">
+        <argument
+            android:name="dishUuid"
+            app:argType="string"
+            app:nullable="false" />
+        <argument
+            android:name="dishName"
+            app:argType="string"
+            app:nullable="false" />
     </fragment>
 
 </navigation>

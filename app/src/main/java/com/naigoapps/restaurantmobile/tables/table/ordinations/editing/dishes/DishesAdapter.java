@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -57,7 +58,7 @@ public class DishesAdapter extends RecyclerViewAdapter<DishesAdapter.DishViewHol
 
         @Override
         public void updateView(DishDTO dto, boolean selected) {
-            if(viewModel.getCurrentOrdination().getValue() != null) {
+            if (viewModel.getCurrentOrdination().getValue() != null) {
                 dishView.setText(dto.getName() + " (" + viewModel.getCurrentOrdination().getValue().getQuantityOf(dto) + ")");
                 adapter.updateData(viewModel.getCurrentOrdination().getValue().getGroups(dto));
             }
@@ -66,6 +67,13 @@ public class DishesAdapter extends RecyclerViewAdapter<DishesAdapter.DishViewHol
         @Override
         public View.OnClickListener getClickListener(DishDTO dto) {
             return evt -> viewModel.addDish(dto);
+        }
+
+        @Override
+        public View.OnClickListener getLongClickListener(DishDTO dto) {
+            return evt -> NavHostFragment.findNavController(getOwner())
+                    .navigate(DishesMenuFragmentDirections
+                            .customizeDish(dto.getUuid(), dto.getName()));
         }
 
         @Override

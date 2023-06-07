@@ -87,7 +87,7 @@ public class DiningTableEditorFragment extends RemoteDataFragment<DiningTableSke
         super.onActivityCreated(savedInstanceState);
         waiterSpinnerAdapter = new SpinnerAdapter<>(getContext(), SPINNER_ITEM);
         waiterSpinner.setAdapter(waiterSpinnerAdapter);
-        tableSpinnerAdapter = new SpinnerAdapter<>(getContext(), SPINNER_ITEM);
+        tableSpinnerAdapter = new RestaurantTableSpinnerAdapter(getContext(), SPINNER_ITEM);
         tableSpinner.setAdapter(tableSpinnerAdapter);
 
         abortBtn.setOnClickListener(evt -> NavHostFragment
