@@ -3,43 +3,123 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/diningTablesFragment">
 
     <fragment
-        android:id="@+id/homeFragment"
-        android:name="com.naigoapps.restaurantmobile.HomeFragment"
-        android:label="Home"
-        tools:layout="@layout/fragment_home" >
-        <action
-            android:id="@+id/actionLoadTables"
-            app:destination="@id/tablesFragment" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/tablesFragment"
+        android:id="@+id/diningTablesFragment"
         android:name="com.naigoapps.restaurantmobile.tables.DiningTablesFragment"
         android:label="Tavoli"
-        tools:layout="@layout/dining_tables_fragment" >
+        tools:layout="@layout/crud_list_view">
         <action
             android:id="@+id/selectTable"
             app:destination="@id/diningTableFragment" />
+        <action
+            android:id="@+id/editDiningTable"
+            app:destination="@id/diningTableEditor" />
+        <action
+            android:id="@+id/sendGenericMessage"
+            app:destination="@id/messagesFragment" />
     </fragment>
     <fragment
         android:id="@+id/diningTableFragment"
         android:name="com.naigoapps.restaurantmobile.tables.table.DiningTableFragment"
-        tools:layout="@layout/dining_table_view" >
+        android:label="{tableName}"
+        tools:layout="@layout/crud_list_view">
+        <argument
+            android:name="tableUuid"
+            app:argType="string"
+            app:nullable="false" />
+        <argument
+            android:name="tableName"
+            app:argType="string"
+            app:nullable="false" />
         <action
-            android:id="@+id/action_diningTableFragment_to_ordinationEditorFragment"
-            app:destination="@id/ordinationEditorFragment" />
+            android:id="@+id/sendTableMessage"
+            app:destination="@id/messagesFragment" />
+        <action
+            android:id="@+id/editOrdination"
+            app:destination="@id/categoriesFragment" />
     </fragment>
     <fragment
         android:id="@+id/diningTableEditor"
         android:name="com.naigoapps.restaurantmobile.tables.table.DiningTableEditorFragment"
-        tools:layout="@layout/dining_table_editor" />
+        tools:layout="@layout/dining_table_editor">
+        <argument
+            android:name="tableUuid"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
     <fragment
-        android:id="@+id/ordinationEditorFragment"
-        android:name="com.naigoapps.restaurantmobile.tables.table.ordinations.OrdinationEditorFragment"
-        android:label="ordination_editor"
-        tools:layout="@layout/ordination_editor" />
+        android:id="@+id/categoriesFragment"
+        android:name="com.naigoapps.restaurantmobile.tables.table.ordinations.editing.categories.CategoriesMenuFragment"
+        android:label="Categorie"
+        tools:layout="@layout/fragment_menu_categories">
+        <argument
+            android:name="tableUuid"
+            app:argType="string"
+            app:nullable="false" />
+        <argument
+            android:name="ordinationUuid"
+            app:argType="string"
+            app:nullable="false" />
+        <action
+            android:id="@+id/selectCategory"
+            app:destination="@id/dishesFragment" />
+        <action
+            android:id="@+id/confirmOrdinationFromCategories"
+            app:destination="@id/diningTableFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/messagesFragment"
+        android:name="com.naigoapps.restaurantmobile.tables.messages.MessagesFragment"
+        android:label="Invio messaggi"
+        tools:layout="@layout/fragment_messages">
+        <argument
+            android:name="tableUuid"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.naigoapps.restaurantmobile.SettingsFragment"
+        android:label="@string/preferences" />
+    <action
+        android:id="@+id/settingsAction"
+        app:destination="@id/settingsFragment" />
+    <fragment
+        android:id="@+id/dishesFragment"
+        android:name="com.naigoapps.restaurantmobile.tables.table.ordinations.editing.dishes.DishesMenuFragment"
+        android:label="{categoryName}"
+        tools:layout="@layout/fragment_menu_dishes">
+        <argument
+            android:name="categoryUuid"
+            app:argType="string"
+            app:nullable="false" />
+        <argument
+            android:name="categoryName"
+            app:argType="string"
+            app:nullable="false" />
+        <action
+            android:id="@+id/confirmOrdinationFromDishes"
+            app:destination="@id/diningTableFragment" />
+        <action
+            android:id="@+id/customizeDish"
+            app:destination="@id/customDishFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/customDishFragment"
+        android:name="com.naigoapps.restaurantmobile.tables.table.ordinations.editing.dishes.CustomDishFragment"
+        android:label="{dishName}">
+        <argument
+            android:name="dishUuid"
+            app:argType="string"
+            app:nullable="false" />
+        <argument
+            android:name="dishName"
+            app:argType="string"
+            app:nullable="false" />
+    </fragment>
 
 </navigation>

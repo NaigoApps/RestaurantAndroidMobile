@@ -10,6 +10,6 @@ package com.naigoapps.restaurantmobile.dto;
  */
 public interface Identifiable {
 
-    public String getUuid();
+    String getUuid();
 
 }

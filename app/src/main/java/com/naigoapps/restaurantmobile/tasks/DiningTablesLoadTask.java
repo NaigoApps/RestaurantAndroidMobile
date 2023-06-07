@@ -13,8 +13,8 @@ import retrofit2.Response;
 
 public class DiningTablesLoadTask extends RemoteLoadTask<DiningTableDTO[]> {
 
-    public DiningTablesLoadTask(FragmentActivity activity, Consumer<DiningTableDTO[]> consumer) {
-        super(activity, consumer);
+    public DiningTablesLoadTask(Consumer<DiningTableDTO[]> consumer) {
+        super(consumer);
     }
 
     @Override

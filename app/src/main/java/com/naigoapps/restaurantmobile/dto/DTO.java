@@ -6,6 +6,7 @@
 package com.naigoapps.restaurantmobile.dto;
 
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  *
@@ -16,7 +17,7 @@ public class DTO implements Identifiable{
     private String uuid;
 
     public DTO() {
-        this.uuid = null;
+        this.uuid = UUID.randomUUID().toString();
     }
 
     public DTO(String uuid) {

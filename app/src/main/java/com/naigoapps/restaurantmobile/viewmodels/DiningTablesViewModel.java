@@ -5,12 +5,11 @@ import com.naigoapps.restaurantmobile.dto.DiningTableDTO;
 import com.naigoapps.restaurantmobile.tasks.DiningTablesLoadTask;
 
 import androidx.core.util.Consumer;
-import androidx.fragment.app.FragmentActivity;
 
-public class DiningTablesViewModel extends RemoteViewModel<DiningTableDTO[]> {
+public class DiningTablesViewModel extends RemoteDataViewModel<DiningTableDTO[]> {
 
     @Override
-    protected RemoteLoadTask<DiningTableDTO[]> createTask(FragmentActivity owner, Consumer<DiningTableDTO[]> consumer) {
-        return new DiningTablesLoadTask(owner, consumer);
+    protected RemoteLoadTask<DiningTableDTO[]> createTask(Consumer<DiningTableDTO[]> consumer) {
+        return new DiningTablesLoadTask(consumer);
     }
 }

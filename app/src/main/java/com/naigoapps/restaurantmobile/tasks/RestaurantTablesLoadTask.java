@@ -14,8 +14,8 @@ import retrofit2.Response;
 
 public class RestaurantTablesLoadTask extends RemoteLoadTask<List<RestaurantTableDTO>> {
 
-    public RestaurantTablesLoadTask(FragmentActivity activity, Consumer<List<RestaurantTableDTO>> consumer) {
-        super(activity, consumer);
+    public RestaurantTablesLoadTask(Consumer<List<RestaurantTableDTO>> consumer) {
+        super(consumer);
     }
 
     @Override

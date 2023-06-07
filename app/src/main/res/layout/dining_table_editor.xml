@@ -39,12 +39,12 @@
                 android:id="@+id/coverChargesField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number" />
+                android:inputType="number"
+                android:selectAllOnFocus="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <Spinner
             android:id="@+id/tableField"
-            style="@android:style/Widget.Material.Spinner"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -56,7 +56,6 @@
 
         <Spinner
             android:id="@+id/waiterField"
-            style="@android:style/Widget.Material.Spinner"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"

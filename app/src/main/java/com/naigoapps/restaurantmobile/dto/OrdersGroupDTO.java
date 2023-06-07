@@ -5,13 +5,17 @@
  */
 package com.naigoapps.restaurantmobile.dto;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
  * @author naigo
  */
 public class OrdersGroupDTO extends DTO {
+
+    private String phaseName;
 
     private DishDTO dish;
 
@@ -66,4 +70,29 @@ public class OrdersGroupDTO extends DTO {
         this.quantity = quantity;
     }
 
+    public String getPhaseName() {
+        return phaseName;
+    }
+
+    public void setPhaseName(String phaseName) {
+        this.phaseName = phaseName;
+    }
+
+    public boolean match(DishDTO dto, List<AdditionDTO> additions, String notes, float price){
+        if(!this.dish.equals(dto)){
+            return false;
+        }
+        if(!new HashSet<>(this.additions).equals(new HashSet<>(additions))){
+            return false;
+        }
+        if(this.price != price){
+            return false;
+        }
+        if(this.notes != null){
+            return this.notes.equals(notes);
+        }else if(notes != null){
+            return notes.equals(this.notes);
+        }
+        return true;
+    }
 }

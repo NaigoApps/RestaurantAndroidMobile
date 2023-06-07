@@ -8,7 +8,7 @@ import retrofit2.http.GET;
 public interface EveningRS {
 
     @GET("evenings/selected")
-    public Call<EveningDTO> selected();
+    Call<EveningDTO> selected();
 
 }
 
